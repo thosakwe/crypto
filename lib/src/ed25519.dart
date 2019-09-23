@@ -12,7 +12,7 @@ class Ed25519 {
   static final BigInt d = BigInt.from(-121665) * inv(BigInt.from(121666));
 
   static final BigInt I =
-      expmod(BigInt.two, (q - BigInt.one) ~/ BigInt.from(2), q);
+      expmod(BigInt.two, (q - BigInt.one) ~/ BigInt.from(4), q);
 
   static final BigInt By = BigInt.from(4) * inv(BigInt.from(5));
 
@@ -57,7 +57,7 @@ class Ed25519 {
     return [x3 % q, y3 % q];
   }
 
-  List<BigInt> scalarmult(List<BigInt> P, BigInt e) {
+  static List<BigInt> scalarmult(List<BigInt> P, BigInt e) {
     if (e == BigInt.zero) return [BigInt.zero, BigInt.one];
     var Q = scalarmult(P, e ~/ BigInt.two);
     Q = edwards(Q, Q);
@@ -65,7 +65,7 @@ class Ed25519 {
     return Q;
   }
 
-  String encodeint(BigInt y) {
+  static String encodeint(BigInt y) {
     var bits = List<BigInt>.generate(b, (i) => (y >> i) & BigInt.one);
     var charCodes = List<int>.generate(b ~/ 8, (i) {
       var sum =
@@ -75,7 +75,7 @@ class Ed25519 {
     return String.fromCharCodes(charCodes);
   }
 
-  String encodepoint(List<BigInt> P) {
+  static String encodepoint(List<BigInt> P) {
     var x = P[0];
     var y = P[1];
     var bits = List<BigInt>.generate(b - 1, (i) => (y >> i) & BigInt.one)
@@ -88,11 +88,11 @@ class Ed25519 {
     return String.fromCharCodes(charCodes);
   }
 
-  int bit(List<int> h, int i) {
+  static int bit(List<int> h, int i) {
     return (h[i ~/ 8] >> (i % 8)) & 1;
   }
 
-  String publickey(List<int> sk) {
+  static String publickey(List<int> sk) {
     var h = H(sk);
     var sum = List.generate(b - 5, (i) {
       i += 3;
@@ -103,7 +103,7 @@ class Ed25519 {
     return encodepoint(A);
   }
 
-  BigInt Hint(List<int> m) {
+  static BigInt Hint(List<int> m) {
     var h = m;
     return List.generate(
             2 * b, (i) => BigInt.two.pow(i) * BigInt.from(bit(h, i)))
@@ -130,19 +130,19 @@ class Ed25519 {
     return encodepoint(R) + encodeint(S);
   }
 
-  bool isoncurve(List<BigInt> P) {
+  static bool isoncurve(List<BigInt> P) {
     var x = P[0];
     var y = P[1];
     return (-x * x + y * y - BigInt.one - d * x * x * y * y) % q == BigInt.zero;
   }
 
-  BigInt decodeint(List<int> s) {
+  static BigInt decodeint(List<int> s) {
     return List.generate(b, (i) {
       return BigInt.two.pow(i) * BigInt.from(bit(s, i));
     }).reduce((a, b) => a + b);
   }
 
-  List<BigInt> decodepoint(List<int> s) {
+  static List<BigInt> decodepoint(List<int> s) {
     var y = List.generate(b - 1, (i) {
       return BigInt.two.pow(i) * BigInt.from(bit(s, i));
     }).reduce((a, b) => a + b);
@@ -157,7 +157,7 @@ class Ed25519 {
     return P;
   }
 
-  void checkvalid(List<int> s, int m, List<int> pk) {
+  static void checkvalid(List<int> s, int m, List<int> pk) {
     if (s.length != b / 4) {
       throw FormatException("signature length is wrong");
     }
