@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 export 'src/digest.dart';
+export 'src/ed25519.dart';
 export 'src/hash.dart';
 export 'src/hmac.dart';
 export 'src/md5.dart';
