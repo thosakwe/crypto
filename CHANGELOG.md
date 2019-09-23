@@ -1,3 +1,10 @@
+## 2.1.3
+  * **Security vulnerability**: Fixed constant-time comparison in `Digest`.
+
+## 2.1.2
+  * Fix bug in SHA-2 384/512 blocksize.
+  * Added HMAC-SHA-2 test vectors
+
 ## 2.1.1+1
   * Bump version number for publish mishap (spare file uploaded with `pub
     publish`).
